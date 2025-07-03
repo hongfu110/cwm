@@ -1,0 +1,29 @@
+{
+	"name": "cwm",
+	"version": "1.2.0",
+	"private": true,
+	"type": "module",
+	"license": "MIT",
+	"scripts": {
+		"deploy:workers": "wrangler deploy",
+		"deploy": "vercel --prod",
+		"dev:workers": "wrangler dev",
+		"dev": "vercel dev",
+		"build:workers": "wrangler build",
+		"build": "vercel build",
+		"start:workers": "wrangler dev",
+		"start": "vercel dev"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "0.8.47",
+		"vercel": "^44.2.7",
+		"wrangler": "^4.22.0"
+	},
+	"dependencies": {
+		"@koa/router": "^13.1.0",
+		"fs": "^0.0.1-security",
+		"koa": "^3.0.0",
+		"node-fetch": "^3.3.2",
+		"yaml": "^2.8.0"
+	}
+}

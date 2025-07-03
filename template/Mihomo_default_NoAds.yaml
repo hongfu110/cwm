@@ -1,0 +1,36 @@
+u: &u { type: url-test, tolerance: 1, strategy: consistent-hashing, url: https://www.gstatic.com/generate_204, interval: 300, lazy: true, timeout: 5000, max-failed-times: 5, include-all: true }
+domain_mrs: &domain_mrs { type: http, interval: 86400, behavior: domain, format: mrs, proxy: 🎯全球直连 }
+ipcidr_mrs: &ipcidr_mrs { type: http, interval: 86400, behavior: ipcidr, format: mrs, proxy: 🎯全球直连 }
+
+proxy-groups:
+  - { name: 🚀全球代理, type: select, proxies: [♻️自动选择, 🟢手动选择, ⚡️均衡负载, 🔯故障转移, 🎯全局直连, 🇭🇰香港自动, 🇹🇼台湾自动, 🇯🇵日本自动, 🇺🇸美国自动, 🇸🇬新加坡自动, 🇰🇷韩国自动] }
+  - { name: 🟢手动选择, <<: *u, type: select }
+  - { name: 🎯全局直连, type: select, hidden: true, proxies: [DIRECT] }
+  - { name: 🚫拒绝连接, type: select, hidden: true, proxies: [REJECT] }
+  - { name: 🚫静默拒绝, type: select, hidden: true, proxies: [REJECT-DROP] }
+  - { name: ⚪绕过连接, type: select, hidden: true, proxies: [PASS] }
+  - { name: 🎯全球直连, type: select, proxies: [🎯全局直连, 🚀全球代理, 🟢手动选择, ♻️自动选择] }
+  - { name: ♻️自动选择, <<: *u, tolerance: 1, type: url-test }
+  - { name: ⚡️均衡负载, <<: *u, strategy: round-robin, type: load-balance }
+  - { name: 🔯故障转移, <<: *u, type: fallback }
+  - { name: 🇭🇰香港自动, <<: *u, hidden: true, filter: (?i)🇭🇰|\\bHK\\b|香港|Hong Kong }
+  - { name: 🇹🇼台湾自动, <<: *u, hidden: true, filter: '(?i)🇹🇼|\bTW\b|台湾|Taiwan|Tai wan' }
+  - { name: 🇯🇵日本自动, <<: *u, hidden: true, filter: '(?i)🇯🇵|\bJP\b|日本|Japan' }
+  - { name: 🇺🇸美国自动, <<: *u, hidden: true, filter: '(?i)🇺🇸|\bUS\b|美国|United States|CT' }
+  - { name: 🇸🇬新加坡自动, <<: *u, hidden: true, filter: '(?i)🇸🇬|\bSG\b|新加坡|Singapore' }
+  - { name: 🇰🇷韩国自动, <<: *u, hidden: true, filter: '(?i)🇰🇷|\bKR\b|韩国|South Korea' }
+  - { name: GLOBAL, type: select, include-all: true, proxies: [ 🚀全球代理, 🟢手动选择, 🎯全球直连, ♻️自动选择, ⚡️均衡负载, 🔯故障转移 ], icon: https://cdn.jsdmirror.com/gh/Kwisma/rules@main/icon/webp/100/GLOBAL.webp }
+
+rules:
+  - RULE-SET,Private,🎯全球直连
+  - RULE-SET,CNcidr,🎯全球直连
+  - MATCH,🚀全球代理
+rule-providers:
+  CNcidr:
+    <<: *ipcidr_mrs
+    url: "https://cdn.jsdmirror.com/gh/Kwisma/clash-rules@release/cncidr.mrs"
+    path: ./ruleset/CN_IP.mrs
+  Private:
+    <<: *domain_mrs
+    url: "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs"
+    path: ./ruleset/Private_Domain.mrs

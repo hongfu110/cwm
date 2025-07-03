@@ -1,0 +1,20 @@
+diff --git a/_worker.js b/_worker.js
+index 37e543b..0d0176a 100644
+--- a/_worker.js
++++ b/_worker.js
+@@ -1,6 +1,14 @@
+ var __defProp = Object.defineProperty;
+-var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
++var __name = (target, value) => {
++  if (target && typeof target === "object" || typeof target === "function") {
++    return __defProp(target, "name", { value, configurable: true });
++  }
++  return target;
++};
+ var __export = (target, all) => {
++  if (!target || (typeof target !== "object" && typeof target !== "function")) {
++    return;
++  }
+   for (var name in all)
+     __defProp(target, name, { get: all[name], enumerable: true });
+ };

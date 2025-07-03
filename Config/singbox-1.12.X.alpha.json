@@ -1,0 +1,208 @@
+{
+    "log": {
+        "disabled": false,
+        "level": "info",
+        "output": "",
+        "timestamp": false
+    },
+    "experimental": {
+        "clash_api": {
+            "external_controller": "0.0.0.0:20123",
+            "external_ui": "ui",
+            "secret": "",
+            "default_mode": "rule",
+            "external_ui_download_url": "https://ghfast.top/https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip",
+            "external_ui_download_detour": "🎯 全球直连",
+            "access_control_allow_origin": [
+                "http://127.0.0.1",
+                "http://localhost",
+                "https://yacd.metacubex.one",
+                "https://d.metacubex.one",
+                "https://board.zash.run.place"
+            ],
+            "access_control_allow_private_network": true
+        },
+        "cache_file": {
+            "enabled": true,
+            "path": "cache.db",
+            "cache_id": "",
+            "store_fakeip": true,
+            "store_rdrc": true,
+            "rdrc_timeout": "1d"
+        }
+    },
+    "dns": {
+        "servers": [
+            {
+                "type": "local",
+                "tag": "local",
+                "detour": "🎯 全球直连"
+            },
+            {
+                "type": "https",
+                "tag": "DIRECT-DNS",
+                "detour": "🎯 全球直连",
+                "server_port": 443,
+                "server": "dns.alidns.com",
+                "domain_resolver": "local"
+            },
+            {
+                "type": "https",
+                "tag": "PROXY-DNS",
+                "detour": "🚀 节点选择",
+                "server_port": 443,
+                "server": "dns.google",
+                "domain_resolver": "local"
+            },
+            {
+                "type": "fakeip",
+                "tag": "FAKEIP-DNS",
+                "inet4_range": "198.18.0.0/15",
+                "inet6_range": "fc00::/18"
+            }
+        ],
+        "rules": [
+            {
+                "clash_mode": "direct",
+                "server": "DIRECT-DNS"
+            },
+            {
+                "clash_mode": "global",
+                "server": "PROXY-DNS"
+            },
+            {
+                "rule_set": [
+                    "geosite-cn",
+                    "geosite-private"
+                ],
+                "server": "DIRECT-DNS"
+            },
+            {
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "server": "FAKEIP-DNS"
+            }
+        ],
+        "disable_cache": true,
+        "disable_expire": true,
+        "independent_cache": true,
+        "final": "PROXY-DNS",
+        "strategy": "prefer_ipv4"
+    },
+    "inbounds": [
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "interface_name": "singbox",
+            "address": [
+                "172.18.0.1/30",
+                "fdfe:dcba:9876::1/126"
+            ],
+            "mtu": 9000,
+            "auto_route": true,
+            "strict_route": true,
+            "endpoint_independent_nat": false,
+            "stack": "gvisor",
+            "platform": {
+                "http_proxy": {
+                    "enabled": true,
+                    "server": "127.0.0.1",
+                    "server_port": 20120
+                }
+            }
+        },
+        {
+            "tag": "mixed-in",
+            "type": "mixed",
+            "listen": "::",
+            "listen_port": 20120
+        }
+    ],
+    "outbounds": [
+        {
+            "tag": "🎯 全局直连",
+            "type": "direct"
+        },
+        {
+            "tag": "🚫 拒绝连接",
+            "type": "socks",
+            "server": "127.0.0.1",
+            "server_port": 1024,
+            "version": "5",
+            "username": "sekai",
+            "password": "admin",
+            "network": "udp",
+            "udp_over_tcp": false
+        }
+    ],
+    "route": {
+        "auto_detect_interface": true,
+        "final": "🚀 节点选择",
+        "default_domain_resolver": {
+            "server": "DIRECT-DNS",
+            "strategy": "prefer_ipv4"
+        },
+        "rules": [
+            {
+                "action": "route-options",
+                "udp_disable_domain_unmapping": true,
+                "udp_connect": true,
+                "udp_timeout": "5m",
+                "tls_fragment": true,
+                "tls_fragment_fallback_delay": "500m",
+                "tls_record_fragment": true
+            },
+            {
+                "action": "resolve"
+            },
+            {
+                "action": "sniff"
+            },
+            {
+                "type": "logical",
+                "mode": "or",
+                "rules": [
+                    {
+                        "port": [
+                            53
+                        ]
+                    },
+                    {
+                        "protocol": "dns"
+                    }
+                ],
+                "action": "hijack-dns"
+            },
+            {
+                "ip_is_private": true,
+                "outbound": "🎯 全球直连"
+            },
+            {
+                "clash_mode": "direct",
+                "outbound": "🎯 全球直连"
+            },
+            {
+                "clash_mode": "global",
+                "outbound": "🚀 节点选择"
+            }
+        ],
+        "rule_set": [
+            {
+                "tag": "geosite-private",
+                "type": "remote",
+                "url": "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/private.srs",
+                "format": "binary",
+                "download_detour": "🎯 全球直连"
+            },
+            {
+                "tag": "geosite-cn",
+                "type": "remote",
+                "url": "https://cdn.jsdmirror.com/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/cn.srs",
+                "format": "binary",
+                "download_detour": "🎯 全球直连"
+            }
+        ]
+    }
+}
