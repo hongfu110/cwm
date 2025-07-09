@@ -1,4 +1,4 @@
-name = "cf-worker-mihomo"
+name = "cwm"
 main = "src/index.js"
 compatibility_date = "2025-04-16"
 compatibility_flags = ["nodejs_compat"]
